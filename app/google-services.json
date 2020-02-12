@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "263906682291",
+    "firebase_url": "https://budgetary-ac2c6.firebaseio.com",
+    "project_id": "budgetary-ac2c6",
+    "storage_bucket": "budgetary-ac2c6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:263906682291:android:ae878888561f8fdf09d7c6",
+        "android_client_info": {
+          "package_name": "com.tecnosols.budgetary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "263906682291-pmbk4nhm25i7t0aigmqgq9jqqr95lduj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tecnosols.budgetary",
+            "certificate_hash": "a357d4e20e8291e50f38964951be2de882c8a953"
+          }
+        },
+        {
+          "client_id": "263906682291-tpaj2okucrt36pgs55ni72k1s921g8fm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhWMRqLCDIlvjzIkcJxPewj2zRR2kWLPU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "263906682291-tpaj2okucrt36pgs55ni72k1s921g8fm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
