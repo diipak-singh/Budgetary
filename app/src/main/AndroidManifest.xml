@@ -23,6 +23,7 @@
             android:screenOrientation="portrait">
         </activity>
         <activity android:name=".MainActivity"
+            android:windowSoftInputMode="adjustPan|adjustResize"
             android:screenOrientation="portrait"></activity>
 
         <meta-data
