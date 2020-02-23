@@ -1,5 +1,6 @@
 package com.tecnosols.budgetary;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
@@ -13,10 +14,14 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class IntroActivity extends AppCompatActivity {
@@ -29,6 +34,9 @@ public class IntroActivity extends AppCompatActivity {
     Button btnGetStarted;
     Animation btnAnim;
     TextView tvSkip;
+
+    private static final int MY_REQUEST_CODE = 007;
+    List<AuthUI.IdpConfig> providers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +54,13 @@ public class IntroActivity extends AppCompatActivity {
         btnAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.button_animation);
         tvSkip = findViewById(R.id.tv_skip);
 
-        String mExp="Manage your monthly expenses and track down the most expensive day of the month via graph plotted on the daily basis.";
-        String dExp="Track down your daily expenses at the end of the day or whenever you want to, what and how much you spend on could be easily tracked.";
-        String aExp="Add your daily expenses totrack them later. Data is stored securily in the cloud so add everything without thinking much about security.";
+        providers = Arrays.asList(
+                new AuthUI.IdpConfig.EmailBuilder().build()
+        );
+
+        String mExp = "Manage your monthly expenses and track down the most expensive day of the month via graph plotted on the daily basis.";
+        String dExp = "Track down your daily expenses at the end of the day or whenever you want to, what and how much you spend on could be easily tracked.";
+        String aExp = "Add your daily expenses totrack them later. Data is stored securely in the cloud so add everything without thinking much about security.";
 
         final List<ScreenItem> mList = new ArrayList<>();
         mList.add(new ScreenItem("Monthly Expenses", mExp, R.drawable.me));
@@ -88,28 +100,21 @@ public class IntroActivity extends AppCompatActivity {
                     loaddLastScreen();
                 }
             }
-
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
-
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
         });
 
         btnGetStarted.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(mainActivity);
+                showSignInOptions();
             }
         });
 
-        // skip button click listener
         tvSkip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,5 +135,28 @@ public class IntroActivity extends AppCompatActivity {
         // setup animation
         btnGetStarted.setAnimation(btnAnim);
 
+    }
+
+    private void showSignInOptions() {
+        startActivityForResult(
+                AuthUI.getInstance().createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .setTheme(R.style.uiLoginTheme)
+                        .build(), MY_REQUEST_CODE
+        );
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == MY_REQUEST_CODE) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(getApplicationContext(), "Successfully LoggedIn", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(IntroActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
+        }
     }
 }

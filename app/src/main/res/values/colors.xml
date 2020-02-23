@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#ffffff</color>
-    <color name="colorPrimaryDark">#ffffff</color>
+    <color name="colorPrimary">#18a3fe</color>
+    <color name="colorPrimaryDark">#4c84ff</color>
     <color name="colorAccent">#ffffff</color>
 
     <!-- colors for button style -->
@@ -17,4 +17,6 @@
     <color name="intro_description_color">#656565</color>
 
     <color name="color_skip">#2d2d2d</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorTransparent">#00000000</color>
 </resources>

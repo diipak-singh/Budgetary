@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    >
+
+    <item
+        android:id="@+id/bot_home"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:checkable="true"
+        android:title="Home" />
+    <item
+        android:id="@+id/bot_expenses"
+        android:icon="@drawable/ic_expenses_black_24dp"
+        android:checkable="true"
+        android:title="Expenses" />
+
+    <item
+        android:id="@+id/bot_profile"
+        android:icon="@drawable/ic_account_circle_black_24dp"
+        android:checkable="true"
+        android:title="Profile" />
+</menu>
