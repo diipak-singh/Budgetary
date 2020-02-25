@@ -19,4 +19,18 @@
     <color name="color_skip">#2d2d2d</color>
     <color name="colorBlack">#000000</color>
     <color name="colorTransparent">#00000000</color>
+
+
+    <color name="colorBox1">#3271DC</color>
+    <color name="colorBox2">#c0c0c0</color>
+    <color name="colorBox3">#2d2d2d</color>
+    <color name="colorBox4">#FFB666</color>
+    <color name="colorBox5">#6200EE</color>
+    <color name="colorBox6">#FF5722</color>
+    <color name="colorBox7">#CDDC39</color>
+    <color name="colorBox8">#FF5252</color>
+    <color name="colorBox9">#69F0AE</color>
+    <color name="colorBox0">#87DC32</color>
+
+
 </resources>

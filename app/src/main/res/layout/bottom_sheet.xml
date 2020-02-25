@@ -65,6 +65,7 @@
                     android:background="#fff"
                     android:fontFamily="@font/roboto"
                     android:hint="Amount"
+                    android:inputType="number"
                     android:textColorHint="@color/colorBlack" />
             </com.google.android.material.textfield.TextInputLayout>
 
