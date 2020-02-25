@@ -1,6 +1,7 @@
 package com.tecnosols.budgetary;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ public class HomeFragment extends Fragment {
     private FloatingActionButton fab;
     BottomSheetDialog mBottomSheetDialog;
     Context ctx;
+    ProgressDialog pd;
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -55,11 +57,12 @@ public class HomeFragment extends Fragment {
 
     private TextInputEditText eName, eDesc, eCurr, eAmount;
     private Button addExpense;
-    private TextView topDate;
+    private TextView topDate, totalExpenditure;
     FirebaseUser user;
     String month;
     String year;
     String day;
+    int total = 0;
 
 
     public HomeFragment() {
@@ -75,9 +78,15 @@ public class HomeFragment extends Fragment {
 
         fab = view.findViewById(R.id.floatingActionButton);
         topDate = view.findViewById(R.id.textView_topDate);
+        totalExpenditure = view.findViewById(R.id.textView_total);
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         ctx = getContext();
+
+        pd = new ProgressDialog(container.getContext());
+        pd.setMessage("Fetching Data...");
+        pd.setCancelable(false);
+        pd.show();
 
         Calendar c = Calendar.getInstance();
         day = Integer.toString(c.get(Calendar.DAY_OF_MONTH));
@@ -129,7 +138,7 @@ public class HomeFragment extends Fragment {
 
                         new AlertDialog.Builder(getContext())
                                 .setIcon(R.drawable.ic_delete_forever_black_24dp)
-                                .setTitle("Deleting, "+expenseList.get(position).getExpName())
+                                .setTitle("Deleting, " + expenseList.get(position).getExpName())
                                 .setMessage("Are you sure, you want to delete this?")
                                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     @Override
@@ -143,6 +152,7 @@ public class HomeFragment extends Fragment {
 
                     }
                 }));
+
 
         return view;
     }
@@ -216,13 +226,16 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
+                    pd.cancel();
                     expenseList.clear();
-
+                    total = 0;
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                         ExpenseDetail ed = ds.getValue(ExpenseDetail.class);
+                        total = total + Integer.parseInt(ed.expAmount);
                         expenseList.add(new ExpenseDetail(ed.expName, ed.expDesc, ed.expCurr, ed.expAmount, ed.expId));
 
                     }
+                    totalExpenditure.setText("Today's Expenditure, Rs." + Integer.toString(total));
                     adapter = new ExpenseAdapter((ArrayList<ExpenseDetail>) expenseList);
                     recyclerView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
