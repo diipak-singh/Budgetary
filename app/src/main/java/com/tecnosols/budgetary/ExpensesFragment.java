@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,6 +32,13 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,6 +55,7 @@ public class ExpensesFragment extends Fragment {
     private Spinner spinnerYear, spinnerMonth;
     private List<String> spinnerListYear = new ArrayList<>();
     private List<String> spinnerListMonth = new ArrayList<>();
+    FirebaseUser user;
 
     int touch_position = 0;
     int iYear;
@@ -54,10 +63,11 @@ public class ExpensesFragment extends Fragment {
 
 
     PieChart chart;
-    PieData pieData;
-    PieDataSet pieDataSet;
-    ArrayList pieEntries;
-    ArrayList PieEntryLabels;
+
+    private RecyclerView recyclerViewBC;
+    private RecyclerView.LayoutManager layoutManagerBC;
+    private RecyclerView.Adapter adapterBC;
+    private List<ExpenseDetail> expenseList = new ArrayList<>();
 
 
     public ExpensesFragment() {
@@ -72,8 +82,11 @@ public class ExpensesFragment extends Fragment {
 
 
         recyclerView = view.findViewById(R.id.recyclerView_expenseTop);
+        recyclerViewBC = view.findViewById(R.id.recyclerViewBC);
+
         spinnerYear = view.findViewById(R.id.spinner_year);
         spinnerMonth = view.findViewById(R.id.spinnerMonth);
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
         expenseTopList.clear();
         spinnerListYear.clear();
@@ -87,7 +100,7 @@ public class ExpensesFragment extends Fragment {
 //        pieDataSet = new PieDataSet(pieEntries, "");
 //        pieData = new PieData(pieDataSet);
 //        chart.setData(pieData);
-        setData();
+        //setData();
 
         chart.setUsePercentValues(true);
         chart.getDescription().setEnabled(false);
@@ -137,6 +150,11 @@ public class ExpensesFragment extends Fragment {
         ((LinearLayoutManager) layoutManager).setOrientation(RecyclerView.HORIZONTAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
+
+        layoutManagerBC = new LinearLayoutManager(getContext());
+        ((LinearLayoutManager) layoutManagerBC).setOrientation(RecyclerView.VERTICAL);
+        recyclerViewBC.setLayoutManager(layoutManagerBC);
+        recyclerViewBC.setHasFixedSize(true);
 
 
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, spinnerListYear);
@@ -219,8 +237,8 @@ public class ExpensesFragment extends Fragment {
                         month.setTextColor(getContext().getColor(R.color.colorBlack));
                         constraintLayout.setBackgroundColor(getContext().getColor(R.color.colorAccent));
 
-                        Toast.makeText(getContext(), Integer.toString(expenseTopList.get(position).getDate()) + expenseTopList.get(position).getMonth() + " Selected.", Toast.LENGTH_SHORT).show();
-
+                        //Toast.makeText(getContext(), Integer.toString(expenseTopList.get(position).getDate()) + expenseTopList.get(position).getMonth() + " Selected.", Toast.LENGTH_SHORT).show();
+                        setData(String.valueOf(expenseTopList.get(position).getDate()), expenseTopList.get(position).getMonth(), spinnerYear.getSelectedItem().toString());
                         touch_position = position;
                     }
 
@@ -291,15 +309,6 @@ public class ExpensesFragment extends Fragment {
 
     }
 
-    private void getChartEntries() {
-        pieEntries = new ArrayList<>();
-        pieEntries.add(new PieEntry(30, 0));
-        pieEntries.add(new PieEntry(100, 1));
-        pieEntries.add(new PieEntry(80, 2));
-        pieEntries.add(new PieEntry(150, 3));
-
-    }
-
     private SpannableString generateCenterSpannableText() {
 
         SpannableString s = new SpannableString("Your Expenditure\npresented by Budgetary in %");
@@ -312,68 +321,103 @@ public class ExpensesFragment extends Fragment {
         return s;
     }
 
-    private void setData() {
+    private void setData(String day, String month, String year) {
 
-        ArrayList<PieEntry> entries = new ArrayList<>();
+        final ArrayList<PieEntry> entries = new ArrayList<>();
 
         // NOTE: The order of the entries when being added to the entries array determines their position around the center of
         // the chart.
 //        for (int i = 0; i < count; i++) {
 //            entries.add(new PieEntry((float) (Math.random() * range) + range / 5, parties[i % parties.length]));
 //        }
-        entries.add(new PieEntry(80, "Breakfast"));
-        entries.add(new PieEntry(150, "Lunch"));
-        entries.add(new PieEntry(50, "Snacks"));
-        entries.add(new PieEntry(200, "Dinner"));
-        entries.add(new PieEntry(80, "Breakfast"));
 
-        PieDataSet dataSet = new PieDataSet(entries, "Today's Expenditure");
-        dataSet.setSliceSpace(3f);
-        dataSet.setSelectionShift(5f);
+        String uid = user.getUid();
+        DatabaseReference dref = FirebaseDatabase.getInstance().getReference().child("ExpensesData/" + uid + "/" + year + "/" + month + "/" + day);
 
-        // add a lot of colors
+        dref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    entries.clear();
+                    expenseList.clear();
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        ExpenseDetail ed = ds.getValue(ExpenseDetail.class);
+                        entries.add(new PieEntry(Integer.parseInt(ed.expAmount), ed.expName));
+                        expenseList.add(new ExpenseDetail(ed.expName, ed.expDesc, ed.expCurr, ed.expAmount, ed.expId));
 
-        ArrayList<Integer> colors = new ArrayList<>();
+                    }
 
-        for (int c : ColorTemplate.VORDIPLOM_COLORS)
-            colors.add(c);
+                    adapterBC = new ExpenseAdapter((ArrayList<ExpenseDetail>) expenseList);
+                    recyclerViewBC.setAdapter(adapterBC);
+                    adapterBC.notifyDataSetChanged();
 
-        for (int c : ColorTemplate.JOYFUL_COLORS)
-            colors.add(c);
+                    PieDataSet dataSet = new PieDataSet(entries, "Today's Expenditure");
+                    dataSet.setSliceSpace(3f);
+                    dataSet.setSelectionShift(5f);
 
-        for (int c : ColorTemplate.COLORFUL_COLORS)
-            colors.add(c);
+                    // add a lot of colors
 
-        for (int c : ColorTemplate.LIBERTY_COLORS)
-            colors.add(c);
+                    ArrayList<Integer> colors = new ArrayList<>();
 
-        for (int c : ColorTemplate.PASTEL_COLORS)
-            colors.add(c);
+                    for (int c : ColorTemplate.VORDIPLOM_COLORS)
+                        colors.add(c);
 
-        colors.add(ColorTemplate.getHoloBlue());
+                    for (int c : ColorTemplate.JOYFUL_COLORS)
+                        colors.add(c);
 
-        dataSet.setColors(colors);
-        //dataSet.setSelectionShift(0f);
+                    for (int c : ColorTemplate.COLORFUL_COLORS)
+                        colors.add(c);
+
+                    for (int c : ColorTemplate.LIBERTY_COLORS)
+                        colors.add(c);
+
+                    for (int c : ColorTemplate.PASTEL_COLORS)
+                        colors.add(c);
+
+                    colors.add(ColorTemplate.getHoloBlue());
+
+                    dataSet.setColors(colors);
+                    //dataSet.setSelectionShift(0f);
 
 
-        dataSet.setValueLinePart1OffsetPercentage(80.f);
-        dataSet.setValueLinePart1Length(0.2f);
-        dataSet.setValueLinePart2Length(0.4f);
+                    dataSet.setValueLinePart1OffsetPercentage(80.f);
+                    dataSet.setValueLinePart1Length(0.2f);
+                    dataSet.setValueLinePart2Length(0.4f);
 
-        //dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
-        dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+                    //dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+                    dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
 
-        PieData data = new PieData(dataSet);
-        data.setValueFormatter(new PercentFormatter());
-        data.setValueTextSize(11f);
-        data.setValueTextColor(Color.BLACK);
-        data.setValueTypeface(Typeface.SANS_SERIF);
-        chart.setData(data);
+                    PieData data = new PieData(dataSet);
+                    data.setValueFormatter(new PercentFormatter());
+                    data.setValueTextSize(11f);
+                    data.setValueTextColor(Color.BLACK);
+                    data.setValueTypeface(Typeface.SANS_SERIF);
+                    chart.setData(data);
 
-        // undo all highlights
-        chart.highlightValues(null);
+                    // undo all highlights
+                    chart.highlightValues(null);
 
-        chart.invalidate();
+                    chart.invalidate();
+
+
+                } else {
+                    entries.clear();
+                    chart.clear();
+                    expenseList.clear();
+
+                    if (adapterBC != null)
+                        adapterBC.notifyDataSetChanged();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
     }
 
 
