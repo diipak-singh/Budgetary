@@ -1,6 +1,7 @@
 package com.tecnosols.budgetary;
 
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -39,10 +40,6 @@ import java.util.List;
 
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class HomeFragment extends Fragment {
 
     private FloatingActionButton fab;
@@ -66,14 +63,14 @@ public class HomeFragment extends Fragment {
 
 
     public HomeFragment() {
-        // Required empty public constructor
+
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         fab = view.findViewById(R.id.floatingActionButton);
@@ -100,7 +97,7 @@ public class HomeFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
-        mBottomSheetDialog = new BottomSheetDialog(getActivity());
+        mBottomSheetDialog = new BottomSheetDialog(getActivity(),R.style.DialogStyle);
         View sheetView = getActivity().getLayoutInflater().inflate(R.layout.bottom_sheet, null);
         mBottomSheetDialog.setContentView(sheetView);
 
@@ -152,6 +149,8 @@ public class HomeFragment extends Fragment {
 
                     }
                 }));
+
+
 
 
         return view;
@@ -240,7 +239,7 @@ public class HomeFragment extends Fragment {
                     recyclerView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                 } else {
-
+                    pd.cancel();
                 }
 
 
@@ -252,5 +251,7 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
+
 
 }

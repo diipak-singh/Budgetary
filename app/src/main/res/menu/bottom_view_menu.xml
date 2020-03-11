@@ -17,7 +17,7 @@
 
     <item
         android:id="@+id/bot_profile"
-        android:icon="@drawable/ic_account_circle_black_24dp"
+        android:icon="@drawable/ic_settings_black_24dp"
         android:checkable="true"
-        android:title="Profile" />
+        android:title="Settings" />
 </menu>

@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".SplashActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="fullSensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,11 +20,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".IntroActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="fullSensor">
         </activity>
         <activity android:name=".MainActivity"
             android:windowSoftInputMode="adjustPan|adjustResize"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="fullSensor"></activity>
 
         <meta-data
             android:name="preloaded_fonts"

@@ -25,13 +25,13 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/nxt_button"
-        android:drawableRight="@drawable/ic_arrow_forward_black_24dp"
+        android:drawableRight="@drawable/ic_arrow_white"
+        android:drawablePadding="10dp"
         android:drawableTint="@color/gradient_start_color"
         android:fontFamily="@font/roboto"
-        android:text="Next"
         android:padding="10dp"
-        android:drawablePadding="10dp"
-        android:textColor="@color/gradient_start_color"
+        android:text="Next"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

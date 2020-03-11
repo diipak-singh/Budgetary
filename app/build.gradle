@@ -6,7 +6,7 @@ android {
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.tecnosols.budgetary"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -35,4 +35,6 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-auth:6.2.0'
 
     implementation 'com.google.android.material:material:1.2.0-alpha05'
+
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }

@@ -1,6 +1,5 @@
 package com.tecnosols.budgetary;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
@@ -33,7 +31,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.expenseV
             Color.parseColor("#FF5252"),
             Color.parseColor("#69F0AE"),
             Color.parseColor("#87DC32"),
-            Color.parseColor("#6200EE"),};
+            Color.parseColor("#6200EE")};
 
     @NonNull
     @Override
@@ -51,6 +49,10 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.expenseV
         String expD = expenseList.get(position).getExpDesc();
         String expA = expenseList.get(position).getExpAmount();
         String expC = expenseList.get(position).getExpCurr();
+
+        if (Integer.parseInt(expA) < 50) {
+            holder.setName(expN, colors[randomInt]);
+        }
 
         holder.setName(expN, colors[randomInt]);
         holder.setDesc(expD);
