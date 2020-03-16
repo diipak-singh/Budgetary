@@ -15,6 +15,7 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -63,6 +65,8 @@ public class ExpensesFragment extends Fragment {
 
 
     PieChart chart;
+
+    String cDay, cMonth, cYear;
 
     private RecyclerView recyclerViewBC;
     private RecyclerView.LayoutManager layoutManagerBC;
@@ -96,11 +100,12 @@ public class ExpensesFragment extends Fragment {
 
 
         chart = view.findViewById(R.id.pieChart);
-//        getChartEntries();
-//        pieDataSet = new PieDataSet(pieEntries, "");
-//        pieData = new PieData(pieDataSet);
-//        chart.setData(pieData);
-        //setData();
+
+        Calendar c = Calendar.getInstance();
+        cDay = Integer.toString(c.get(Calendar.DAY_OF_MONTH));
+        cMonth = getMonthName();
+        cYear = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
+        setData(cDay,cMonth,cYear);
 
         chart.setUsePercentValues(true);
         chart.getDescription().setEnabled(false);
@@ -177,10 +182,10 @@ public class ExpensesFragment extends Fragment {
         spinnerMonth.setAdapter(dataAdapter2);
 
 
-        int selectionPosition = dataAdapter.getPosition("2020");
+        int selectionPosition = dataAdapter.getPosition(cYear);
         spinnerYear.setSelection(selectionPosition);
 
-        int selectionPosition2 = dataAdapter2.getPosition("Mar");
+        int selectionPosition2 = dataAdapter2.getPosition(cMonth);
         spinnerMonth.setSelection(selectionPosition2);
 
 
@@ -204,6 +209,8 @@ public class ExpensesFragment extends Fragment {
         });
 
 
+
+
         spinnerMonth.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -214,7 +221,7 @@ public class ExpensesFragment extends Fragment {
                 adapter = new ExpensesTopAdapter((ArrayList<ExpensesTopModel>) expenseTopList);
                 recyclerView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
-                recyclerView.scrollToPosition(21 - 3);
+                recyclerView.scrollToPosition(Integer.parseInt(cDay) - 4);
 
             }
 
@@ -305,19 +312,20 @@ public class ExpensesFragment extends Fragment {
 
     }
 
-    private void showGraph(String day, String month, String year) {
-
-    }
-
     private SpannableString generateCenterSpannableText() {
 
-        SpannableString s = new SpannableString("Your Expenditure\npresented by Budgetary in %");
+        /*SpannableString s = new SpannableString("Your Expenditure\npresented by Budgetary in %");
         s.setSpan(new RelativeSizeSpan(1.5f), 0, 16, 0);
         s.setSpan(new StyleSpan(Typeface.NORMAL), 16, s.length() - 17, 0);
         s.setSpan(new ForegroundColorSpan(Color.GRAY), 16, s.length() - 17, 0);
         s.setSpan(new RelativeSizeSpan(.65f), 16, s.length() - 17, 0);
         s.setSpan(new StyleSpan(Typeface.ITALIC), s.length() - 16, s.length(), 0);
-        s.setSpan(new ForegroundColorSpan(ColorTemplate.getHoloBlue()), s.length() - 17, s.length(), 0);
+        s.setSpan(new ForegroundColorSpan(ColorTemplate.getHoloBlue()), s.length() - 17, s.length(), 0);*/
+
+        SpannableString s = new SpannableString("Expenditure\nin %");
+        s.setSpan(new RelativeSizeSpan(1.5f), 0, 11, 0);
+        s.setSpan(new StyleSpan(Typeface.BOLD_ITALIC), 11, s.length(), 0);
+
         return s;
     }
 
@@ -359,22 +367,25 @@ public class ExpensesFragment extends Fragment {
 
                     ArrayList<Integer> colors = new ArrayList<>();
 
-                    for (int c : ColorTemplate.VORDIPLOM_COLORS)
+                    /*for (int c : ColorTemplate.VORDIPLOM_COLORS) {
                         colors.add(c);
 
+                    }*/
+
+
                     for (int c : ColorTemplate.JOYFUL_COLORS)
+                        colors.add(c);
+
+                    /*for (int c : ColorTemplate.JOYFUL_COLORS)
                         colors.add(c);
 
                     for (int c : ColorTemplate.COLORFUL_COLORS)
                         colors.add(c);
 
-                    for (int c : ColorTemplate.LIBERTY_COLORS)
-                        colors.add(c);
-
                     for (int c : ColorTemplate.PASTEL_COLORS)
-                        colors.add(c);
+                        colors.add(c);*/
 
-                    colors.add(ColorTemplate.getHoloBlue());
+                    //colors.add(ColorTemplate.getHoloBlue());
 
                     dataSet.setColors(colors);
                     //dataSet.setSelectionShift(0f);
@@ -420,5 +431,11 @@ public class ExpensesFragment extends Fragment {
 
     }
 
+    private String getMonthName() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat month_date = new SimpleDateFormat("MMM");
+        String month_name = month_date.format(cal.getTime());
+        return month_name;
+    }
 
 }

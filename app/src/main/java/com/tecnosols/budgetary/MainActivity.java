@@ -4,7 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,7 +44,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.bot_home);
 
+        /*TelephonyManager tm = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
+        String countryCodeValue = tm.getNetworkCountryIso();
+
+        Log.i("countryCode",countryCodeValue);*/
+
     }
+
+
 
     HomeFragment homeFragment = new HomeFragment();
     ExpensesFragment expensesFragment = new ExpensesFragment();
@@ -56,11 +66,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 return true;
 
             case R.id.bot_expenses:
-                getSupportFragmentManager().beginTransaction().replace(R.id.container, expensesFragment).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.container, expensesFragment).addToBackStack(null).commit();
                 return true;
 
             case R.id.bot_profile:
-                getSupportFragmentManager().beginTransaction().replace(R.id.container, profileFragment).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.container, profileFragment).addToBackStack(null).commit();
                 return true;
         }
 

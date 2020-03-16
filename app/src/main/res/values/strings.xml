@@ -3,4 +3,26 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="add_expense">
+        Budgetary helps you to  track and manage your expenses on daily basis.You can also get a glimpse on
+        your previous expenses by selecting particular date.\nTo add an expense just tap + button on the bottom right corner and fill the required details then and just press add
+        afterwards. No need to worry about managing date and time, application manages it by itself.
+    </string>
+
+    <string name="delete_expense">
+        To delete an expense data just long press on that, after that you will be asked to press yes on confirmation and by
+        pressing yes that particular expense data would be deleted.
+    </string>
+
+    <string name="previous_expenses">
+        To get a glimpse of your previous expenses just tap Expenses on bottom navigation bar, after that you would be greeted by
+        graphical view of your expenses on that particular day.
+    </string>
+
+    <string name="remove_ads">
+        As this project is developed, maintained and managed by an individual developer so ads are used to support this project
+        if you want to remove ads just tap RemoveAds in settings and do some one time payment to remove ads.
+    </string>
+
 </resources>

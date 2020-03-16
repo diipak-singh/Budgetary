@@ -21,4 +21,12 @@
         <item name="android:windowSoftInputMode">adjustResize</item>
     </style>
 
+<!--    <item name="switchStyle" type="style">@style/Widget.MaterialComponents.CompoundButton.Switch</item>-->
+
+    <style name="switch_style" parent="Widget.MaterialComponents.CompoundButton.Switch" >
+        <item name="colorPrimary">@color/colorAccent</item>
+        <item name="colorPrimaryDark">@color/colorBlack</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
 </resources>

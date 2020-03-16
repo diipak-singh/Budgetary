@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
@@ -21,15 +22,21 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.expenseV
         this.expenseList = expenseList;
     }
 
-    int[] colors = {Color.parseColor("#3271DC"),
-            Color.parseColor("#c0c0c0"),
-            Color.parseColor("#2d2d2d"),
-            Color.parseColor("#FFB666"),
-            Color.parseColor("#6200EE"),
-            Color.parseColor("#FF5722"),
-            Color.parseColor("#CDDC39"),
-            Color.parseColor("#FF5252"),
-            Color.parseColor("#69F0AE"),
+    int[] colors = {Color.parseColor("#DA4F89"),
+            Color.parseColor("#FF9507"),
+            Color.parseColor("#FFF77B"),
+            Color.parseColor("#6AA785"),
+            Color.parseColor("#35C2D3"),//5
+
+            Color.parseColor("#C2FF8C"),
+            Color.parseColor("#FFF78D"),
+            Color.parseColor("#FDCF8B"),
+            Color.parseColor("#8DE9FF"),
+            Color.parseColor("#FF8D9D"),//10
+
+            Color.parseColor("#87DC32"),
+            Color.parseColor("#87DC32"),
+            Color.parseColor("#87DC32"),
             Color.parseColor("#87DC32"),
             Color.parseColor("#6200EE")};
 
@@ -50,11 +57,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.expenseV
         String expA = expenseList.get(position).getExpAmount();
         String expC = expenseList.get(position).getExpCurr();
 
-        if (Integer.parseInt(expA) < 50) {
-            holder.setName(expN, colors[randomInt]);
-        }
-
-        holder.setName(expN, colors[randomInt]);
+        holder.setName(expN, colors[position]);
         holder.setDesc(expD);
         holder.setAmount(expA, expC);
     }
@@ -67,6 +70,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.expenseV
     public static class expenseViewHolder extends RecyclerView.ViewHolder {
         private TextView expName, expDesc, expAmount;
         private MaterialCardView expCard;
+        private ConstraintLayout clayout;
 
         public expenseViewHolder(@NonNull View itemView) {
             super(itemView);
