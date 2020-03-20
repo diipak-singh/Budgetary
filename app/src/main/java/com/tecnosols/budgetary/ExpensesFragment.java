@@ -105,7 +105,7 @@ public class ExpensesFragment extends Fragment {
         cDay = Integer.toString(c.get(Calendar.DAY_OF_MONTH));
         cMonth = getMonthName();
         cYear = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
-        setData(cDay,cMonth,cYear);
+        setData(cDay, cMonth, cYear);
 
         chart.setUsePercentValues(true);
         chart.getDescription().setEnabled(false);
@@ -207,9 +207,6 @@ public class ExpensesFragment extends Fragment {
 
             }
         });
-
-
-
 
         spinnerMonth.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

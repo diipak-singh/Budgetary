@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -85,6 +86,8 @@ public class HomeFragment extends Fragment {
         pd.setCancelable(false);
         pd.show();
 
+        FirebaseMessaging.getInstance().subscribeToTopic("allDevices");
+
         Calendar c = Calendar.getInstance();
         day = Integer.toString(c.get(Calendar.DAY_OF_MONTH));
         month = getMonthName();
@@ -97,7 +100,7 @@ public class HomeFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
-        mBottomSheetDialog = new BottomSheetDialog(getActivity(),R.style.DialogStyle);
+        mBottomSheetDialog = new BottomSheetDialog(getActivity(), R.style.DialogStyle);
         View sheetView = getActivity().getLayoutInflater().inflate(R.layout.bottom_sheet, null);
         mBottomSheetDialog.setContentView(sheetView);
 
@@ -149,8 +152,6 @@ public class HomeFragment extends Fragment {
 
                     }
                 }));
-
-
 
 
         return view;
@@ -251,6 +252,7 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
 
 
 
