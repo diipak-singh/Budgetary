@@ -42,6 +42,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -62,6 +63,7 @@ public class ExpensesFragment extends Fragment {
     int touch_position = 0;
     int iYear;
     int daysInMonth = 28;
+    int iMonth;
 
 
     PieChart chart;
@@ -72,6 +74,8 @@ public class ExpensesFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManagerBC;
     private RecyclerView.Adapter adapterBC;
     private List<ExpenseDetail> expenseList = new ArrayList<>();
+
+    private TextView selectedDate;
 
 
     public ExpensesFragment() {
@@ -84,9 +88,9 @@ public class ExpensesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_expenses, container, false);
 
-
         recyclerView = view.findViewById(R.id.recyclerView_expenseTop);
         recyclerViewBC = view.findViewById(R.id.recyclerViewBC);
+        selectedDate=view.findViewById(R.id.textView_selectedDate);
 
         spinnerYear = view.findViewById(R.id.spinner_year);
         spinnerMonth = view.findViewById(R.id.spinnerMonth);
@@ -105,41 +109,32 @@ public class ExpensesFragment extends Fragment {
         cDay = Integer.toString(c.get(Calendar.DAY_OF_MONTH));
         cMonth = getMonthName();
         cYear = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
+
         setData(cDay, cMonth, cYear);
+        selectedDate.setText(cDay+" "+cMonth+" "+"selected");
 
         chart.setUsePercentValues(true);
         chart.getDescription().setEnabled(false);
         chart.setExtraOffsets(5, 10, 5, 5);
-
         chart.setDragDecelerationFrictionCoef(0.95f);
-
         chart.setCenterTextTypeface(Typeface.SANS_SERIF);
         chart.setCenterText(generateCenterSpannableText());
-
         chart.setExtraOffsets(20.f, 0.f, 20.f, 0.f);
-
         chart.setDrawHoleEnabled(true);
         chart.setHoleColor(Color.WHITE);
-
         chart.setTransparentCircleColor(Color.WHITE);
         chart.setTransparentCircleAlpha(110);
-
         chart.setHoleRadius(58f);
         chart.setTransparentCircleRadius(61f);
-
         chart.setDrawCenterText(true);
-
         chart.setRotationAngle(0);
         // enable rotation of the chart by touch
         chart.setRotationEnabled(true);
         chart.setHighlightPerTapEnabled(true);
-
         // chart.setUnit(" €");
         // chart.setDrawUnitsInChart(true);
-
         // add a selection listener
         //chart.setOnChartValueSelectedListener(this);
-
         chart.animateY(1400, Easing.EaseInOutQuad);
         // chart.spin(2000, 0, 360);
 
@@ -149,7 +144,6 @@ public class ExpensesFragment extends Fragment {
         l.setOrientation(Legend.LegendOrientation.VERTICAL);
         l.setDrawInside(false);
         l.setEnabled(false);
-
 
         layoutManager = new LinearLayoutManager(getContext());
         ((LinearLayoutManager) layoutManager).setOrientation(RecyclerView.HORIZONTAL);
@@ -161,26 +155,17 @@ public class ExpensesFragment extends Fragment {
         recyclerViewBC.setLayoutManager(layoutManagerBC);
         recyclerViewBC.setHasFixedSize(true);
 
-
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, spinnerListYear);
-
         // Drop down layout style - list view with radio button
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-
         // attaching data adapter to spinner
         spinnerYear.setAdapter(dataAdapter);
 
-
         ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, spinnerListMonth);
-
         // Drop down layout style - list view with radio button
         dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-
         // attaching data adapter to spinner
         spinnerMonth.setAdapter(dataAdapter2);
-
 
         int selectionPosition = dataAdapter.getPosition(cYear);
         spinnerYear.setSelection(selectionPosition);
@@ -188,8 +173,9 @@ public class ExpensesFragment extends Fragment {
         int selectionPosition2 = dataAdapter2.getPosition(cMonth);
         spinnerMonth.setSelection(selectionPosition2);
 
-
-        final int iMonth = Calendar.FEBRUARY; // 1 (months begin with 0)
+        ///////////////////////////////
+        iMonth=getMonth(cMonth);
+        ///////////////////
         final int iDay = 1;
 
         spinnerYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -212,10 +198,17 @@ public class ExpensesFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 expenseTopList.clear();
+                String mon=spinnerListMonth.get(position);
+
+                iMonth=getMonth(mon);
+
+                Calendar mycal = new GregorianCalendar(iYear, iMonth, iDay);
+                daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
+                Log.i("CheckFlag", Integer.toString(daysInMonth));
                 for (int i = 1; i <= daysInMonth; i++) {
                     expenseTopList.add(new ExpensesTopModel(i, parent.getItemAtPosition(position).toString()));
                 }
-                adapter = new ExpensesTopAdapter((ArrayList<ExpensesTopModel>) expenseTopList);
+                adapter = new ExpensesTopAdapter((ArrayList<ExpensesTopModel>) expenseTopList,getActivity());
                 recyclerView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(Integer.parseInt(cDay) - 4);
@@ -233,16 +226,17 @@ public class ExpensesFragment extends Fragment {
                 new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        TextView date = view.findViewById(R.id.textView_topDate);
+                        /*TextView date = view.findViewById(R.id.textView_topDate);
                         TextView month = view.findViewById(R.id.textView_topMonth);
                         ConstraintLayout constraintLayout = view.findViewById(R.id.constraintLayout_expTop);
 
                         date.setTextColor(getContext().getColor(R.color.colorBlack));
                         month.setTextColor(getContext().getColor(R.color.colorBlack));
-                        constraintLayout.setBackgroundColor(getContext().getColor(R.color.colorAccent));
+                        constraintLayout.setBackgroundColor(getContext().getColor(R.color.colorAccent));*/
 
                         //Toast.makeText(getContext(), Integer.toString(expenseTopList.get(position).getDate()) + expenseTopList.get(position).getMonth() + " Selected.", Toast.LENGTH_SHORT).show();
                         setData(String.valueOf(expenseTopList.get(position).getDate()), expenseTopList.get(position).getMonth(), spinnerYear.getSelectedItem().toString());
+                        selectedDate.setText(String.valueOf(expenseTopList.get(position).getDate())+" "+expenseTopList.get(position).getMonth()+" "+"selected");
                         touch_position = position;
                     }
 
@@ -258,9 +252,6 @@ public class ExpensesFragment extends Fragment {
         return view;
     }
 
-    private void selectedDate(int position) {
-
-    }
 
     private void getMonthList() {
         /*DatabaseReference dref=FirebaseDatabase.getInstance().getReference().child("AppData/Months");
@@ -433,6 +424,41 @@ public class ExpensesFragment extends Fragment {
         SimpleDateFormat month_date = new SimpleDateFormat("MMM");
         String month_name = month_date.format(cal.getTime());
         return month_name;
+    }
+
+    private int getMonth(String cMonth){
+        int iMonth = 28;
+
+        if (cMonth.matches("Jan")) {
+            iMonth = Calendar.JANUARY; // 1 (months begin with 0)
+           /* YearMonth yearMonthObject = YearMonth.of(1999, 2);
+            int daysInMonth = yearMonthObject.lengthOfMonth();*/
+        } else if (cMonth.matches("Feb")) {
+            iMonth = Calendar.FEBRUARY; // 1 (months begin with 0)
+        } else if (cMonth.matches("Mar")) {
+            iMonth = Calendar.MARCH; // 1 (months begin with 0)
+        } else if (cMonth.matches("Apr")) {
+            iMonth = Calendar.APRIL; // 1 (months begin with 0)
+        } else if (cMonth.matches("May")) {
+            iMonth = Calendar.MAY; // 1 (months begin with 0)
+        } else if (cMonth.matches("Jun")) {
+            iMonth = Calendar.JUNE; // 1 (months begin with 0)
+        } else if (cMonth.matches("Jul")) {
+            iMonth = Calendar.JULY; // 1 (months begin with 0)
+        } else if (cMonth.matches("Aug")) {
+            iMonth = Calendar.AUGUST; // 1 (months begin with 0)
+        } else if (cMonth.matches("Sep")) {
+              iMonth = Calendar.SEPTEMBER; // 1 (months begin with 0)
+        } else if (cMonth.matches("Oct")) {
+            iMonth = Calendar.OCTOBER; // 1 (months begin with 0)
+        } else if (cMonth.matches("Nov")) {
+            iMonth = Calendar.NOVEMBER; // 1 (months begin with 0)
+        } else if (cMonth.matches("Dec")) {
+            iMonth = Calendar.DECEMBER; // 1 (months begin with 0)
+        }
+
+        return iMonth;
+
     }
 
 }
