@@ -155,8 +155,8 @@ public class ProfileFragment extends Fragment {
     private void shareApp() {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        String subject = "https://play.google.com/store/apps/details?id=com.tecnosols.mistri&hl=en";
-        String body = "https://play.google.com/store/apps/details?id=com.tecnosols.mistri&hl=en";
+        String subject = "https://play.google.com/store/apps/details?id=com.tecnosols.budgetary";
+        String body = "https://play.google.com/store/apps/details?id=com.tecnosols.budgetary";
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
         intent.putExtra(Intent.EXTRA_TEXT, body);
         startActivity(Intent.createChooser(intent, "Share via.."));
