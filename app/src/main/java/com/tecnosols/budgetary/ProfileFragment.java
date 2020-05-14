@@ -3,12 +3,14 @@ package com.tecnosols.budgetary;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -38,7 +40,7 @@ public class ProfileFragment extends Fragment {
     private TextView profileUsrName, profileUsrMail;
     private FirebaseUser user;
 
-    private MaterialCardView logout, share, removeAds, help_center;
+    private MaterialCardView logout, share, removeAds, help_center,rateApp;
     private SwitchMaterial switchBiometric;
     private Context context;
     SharedPreferences sp;
@@ -62,6 +64,7 @@ public class ProfileFragment extends Fragment {
         removeAds = view.findViewById(R.id.card_removeAds);
         help_center = view.findViewById(R.id.card_help);
         switchBiometric = view.findViewById(R.id.switchFingerprint);
+        rateApp=view.findViewById(R.id.card_rate);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -120,6 +123,13 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        rateApp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rateApp();
+            }
+        });
+
         switchBiometric.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -145,6 +155,22 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
+    private void rateApp(){
+        Uri uri = Uri.parse("market://details?id=" + context.getPackageName());
+        Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+        // To count with Play market backstack, After pressing back button,
+        // to taken back to our application, we need to add following flags to intent.
+        goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+                Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        try {
+            startActivity(goToMarket);
+        } catch (ActivityNotFoundException e) {
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("http://play.google.com/store/apps/details?id=" + context.getPackageName())));
+        }
+    }
+
     private void Logout() {
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(getActivity(), IntroActivity.class);
@@ -156,6 +182,7 @@ public class ProfileFragment extends Fragment {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         String subject = "https://play.google.com/store/apps/details?id=com.tecnosols.budgetary";
+        //String subject = "Hey check this, one of the best apps to manage your budget on daily basis.";
         String body = "https://play.google.com/store/apps/details?id=com.tecnosols.budgetary";
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
         intent.putExtra(Intent.EXTRA_TEXT, body);
